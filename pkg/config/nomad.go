@@ -10,12 +10,14 @@ type NomadConfig struct {
 	AllowStale   bool
 	NomadAddress string
 	NomadRegion  string
+	NomadACLToken string
 }
 
 const (
 	configKeyNomadAllowStale = "nomad-allow-stale"
 	configKeyNomadAddress    = "nomad-address"
 	configKeyNomadRegion     = "nomad-region"
+	configNomadACLToken      = "nomad-acl-token"
 )
 
 // GetNomadConfig uses viper to populate a NomadConfig struct with values.
@@ -24,6 +26,7 @@ func GetNomadConfig() NomadConfig {
 		AllowStale:   viper.GetBool(configKeyNomadAllowStale),
 		NomadAddress: viper.GetString(configKeyNomadAddress),
 		NomadRegion:  viper.GetString(configKeyNomadRegion),
+		NomadACLToken: viper.GetString(configNomadACLToken),
 	}
 }
 
@@ -70,4 +73,16 @@ func RegisterNomadConfig(cmd *cobra.Command) {
 		viper.SetDefault(key, defaultValue)
 	}
 
+	{
+		const (
+			key          = configNomadACLToken
+			longOpt      = "nomad-acl-token"
+			defaultValue = ""
+			description  = "The Nomad acl token."
+		)
+
+		flags.String(longOpt, defaultValue, description)
+		_ = viper.BindPFlag(key, flags.Lookup(longOpt))
+		viper.SetDefault(key, defaultValue)
+	}
 }
